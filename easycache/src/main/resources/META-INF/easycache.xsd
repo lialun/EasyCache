@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~  Copyright  2017-2018. the original author or authors.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<xsd:schema xmlns="http://allan.li/easycache"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://allan.li/easycache"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+    <!--
+      ~  main config
+      -->
+    <xsd:element name="annotation_cache"/>
+
+    <xsd:element name="config">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence>
+                        <xsd:group ref="localCache"/>
+                        <xsd:group ref="remoteCache"/>
+                        <xsd:group ref="commonConfig"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!--
+      ~  local cache config
+      -->
+    <xsd:group name="localCache">
+        <xsd:sequence>
+            <xsd:element name="local_cache" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="maximum_size_per_cachekey">
+                            <xsd:complexType>
+                                <xsd:attribute name="default" type="xsd:positiveInteger"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="cache_soft_value" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:attribute name="value" type="xsd:boolean" default="false"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="cleanup_interval" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:attribute name="seconds" type="xsd:nonNegativeInteger" default="0"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:all>
+                    <xsd:attribute name="cache_type" type="xsd:string" default="caffeine"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:group>
+
+    <!--
+      ~  remote cache config
+      -->
+    <xsd:group name="remoteCache">
+        <xsd:sequence>
+            <xsd:element name="remote_cache" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="jedis">
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" type="xsd:string"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="lettuce">
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" type="xsd:string"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+                    <xsd:attribute name="cache_type" type="xsd:string" default="caffeine"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:group>
+
+    <!--
+      ~  other config
+      -->
+    <xsd:group name="commonConfig">
+        <xsd:sequence>
+            <xsd:element name="defaultCacheExpire" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:attribute name="seconds" type="xsd:positiveInteger" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:group>
+
+</xsd:schema>
