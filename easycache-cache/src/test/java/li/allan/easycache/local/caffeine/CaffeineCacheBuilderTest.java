@@ -16,7 +16,7 @@
 
 package li.allan.easycache.local.caffeine;
 
-import li.allan.easycache.Cache;
+import li.allan.easycache.local.LocalCache;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,7 +30,7 @@ public class CaffeineCacheBuilderTest {
     public void testBuild() {
         //empty config
         CaffeineConfig caffeineConfig = new CaffeineConfig();
-        Cache cache = new CaffeineCacheBuilder().build();
+        LocalCache cache = new CaffeineCacheBuilder().build();
         assertEquals(caffeineConfig, ((CaffeineCache) cache).getConfig());
 
         //full config

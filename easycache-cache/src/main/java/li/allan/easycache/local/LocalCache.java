@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package li.allan.easycache.cache;
+package li.allan.easycache.local;
 
-import li.allan.easycache.local.LocalCache;
 import li.allan.easycache.ValueWrapper;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lialun
  */
-public abstract class CacheOperator {
-    public abstract void put(String cacheName, String cacheKey, Object value, long expireInSecond, int cacheSize);
+public interface LocalCache<K, V> {
+    void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit);
 
-    public abstract <V> ValueWrapper<V> get(String cacheName, String cacheKey, Class<V> type);
+    V get(K key);
 
-    public abstract void remove(String cacheName, String cacheKey);
+    ValueWrapper<V> getValueWrapper(K key);
 
-    public abstract LocalCache<String, Object> getCache(String cacheName);
+    boolean contains(K key);
+
+    void invalidate(K key);
+
+    long expireTimestampInMills(K key);
+
+    long size();
 }

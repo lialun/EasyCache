@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package li.allan.easycache;
+package li.allan.easycache.remote;
+
+import li.allan.easycache.BytesValueWrapper;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author lialun
  */
-public interface Cache<K, V> {
-    void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit);
+public interface RemoteCache {
+    void put(byte[] key, byte[] value, long expireAfterCreate, TimeUnit timeUnit);
 
-    V get(K key);
+    byte[] get(byte[] key);
 
-    ValueWrapper<V> getValueWrapper(K key);
+    BytesValueWrapper getValueWrapper(byte[] key);
 
-    boolean contains(K key);
+    boolean contains(byte[] key);
 
-    void invalidate(K key);
+    void invalidate(byte[] key);
 
-    long expireTimestampInMills(K key);
+    long expireTimestampInMills(byte[] key);
 
     long size();
 }

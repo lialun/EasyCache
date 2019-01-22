@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package li.allan.easycache.cache;
-
-import li.allan.easycache.local.LocalCache;
-import li.allan.easycache.ValueWrapper;
+package li.allan.easycache;
 
 /**
  * @author lialun
  */
-public abstract class CacheOperator {
-    public abstract void put(String cacheName, String cacheKey, Object value, long expireInSecond, int cacheSize);
+public interface RemoteCacheConfig extends CacheConfig {
 
-    public abstract <V> ValueWrapper<V> get(String cacheName, String cacheKey, Class<V> type);
-
-    public abstract void remove(String cacheName, String cacheKey);
-
-    public abstract LocalCache<String, Object> getCache(String cacheName);
 }

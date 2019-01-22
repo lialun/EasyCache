@@ -20,6 +20,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import li.allan.easycache.ValueWrapper;
+import li.allan.easycache.local.LocalCache;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,7 +32,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * @author lialun
  */
 
-public class CaffeineCache<K, V> implements li.allan.easycache.Cache<K, V> {
+public class CaffeineCache<K, V> implements LocalCache<K, V> {
     private CaffeineConfig caffeineConfig;
     private Cache<K, ValueWrapper<V>> cache;
     private ScheduledExecutorService cleanUpExecutor;

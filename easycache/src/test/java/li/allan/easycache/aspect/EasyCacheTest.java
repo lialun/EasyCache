@@ -16,7 +16,7 @@
 
 package li.allan.easycache.aspect;
 
-import li.allan.easycache.Cache;
+import li.allan.easycache.local.LocalCache;
 import li.allan.easycache.TestBase;
 import li.allan.easycache.annotation.EasyCache;
 import li.allan.easycache.config.EasyCacheConfig;
@@ -56,7 +56,7 @@ public class EasyCacheTest extends TestBase {
     @Test
     public void voidReturnTest() {
         easyCacheTest.voidReturn();
-        Cache<String, Object> cache = EasyCacheConfig.getLocalCacheOperator().getCache("voidReturn");
+        LocalCache<String, Object> cache = EasyCacheConfig.getLocalCacheOperator().getCache("voidReturn");
         assertNull(cache);
     }
 
@@ -68,7 +68,7 @@ public class EasyCacheTest extends TestBase {
         }
         Thread.sleep(1000);//wait caffeine cleanup
 
-        Cache<String, Object> cache = EasyCacheConfig.getLocalCacheOperator().getCache("withSize");
+        LocalCache<String, Object> cache = EasyCacheConfig.getLocalCacheOperator().getCache("withSize");
         assertEquals(30, cache.size());
         cache = EasyCacheConfig.getLocalCacheOperator().getCache("withoutSize");
         assertEquals(50, cache.size());

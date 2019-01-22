@@ -16,6 +16,9 @@
 
 package li.allan.easycache;
 
+/**
+ * @author lialun
+ */
 public interface LocalCacheConfig extends CacheConfig {
 
 }

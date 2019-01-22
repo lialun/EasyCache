@@ -117,7 +117,7 @@ public class EasyCacheNamespaceHandler extends NamespaceHandlerSupport {
 
 //        private static void parseCache(Element element, BeanDefinitionBuilder factory) {
 //            /*
-//             * internal Cache Config
+//             * internal LocalCache Config
 //             */
 //            Element externalElement = DomUtils.getChildElementByTagName(element, "external");
 //            if (externalElement != null) {
@@ -127,7 +127,7 @@ public class EasyCacheNamespaceHandler extends NamespaceHandlerSupport {
 //                }
 //            }
 //            /*
-//             * default Cache Config
+//             * default LocalCache Config
 //             */
 //            List<Element> defaultCacheElements = DomUtils.getChildElementsByTagName(element, "defaultCache");
 //            if (defaultCacheElements.size() > 0) {
