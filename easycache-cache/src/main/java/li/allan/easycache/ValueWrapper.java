@@ -16,10 +16,13 @@
 
 package li.allan.easycache;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * @author lialun
  */
-public class ValueWrapper<V> {
+public class ValueWrapper<V> implements Serializable {
     private V value;
     private long expireTimestampInMills;
 
@@ -46,5 +49,19 @@ public class ValueWrapper<V> {
                 "value=" + value +
                 ", expireTimestampInMills=" + expireTimestampInMills +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ValueWrapper<?> that = (ValueWrapper<?>) o;
+        return expireTimestampInMills == that.expireTimestampInMills &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, expireTimestampInMills);
     }
 }

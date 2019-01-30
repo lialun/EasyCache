@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package li.allan.easycache.remote.serializer.exception;
 
-package li.allan.easycache.remote;
+public class SerializationException extends RuntimeException {
+    public SerializationException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
-import java.io.Serializable;
+    public SerializationException(String msg) {
+        super(msg);
+    }
 
-/**
- * @author LiALuN
- */
-public class Constants {
-    public static final byte[] EMPTY_ARRAY = new byte[0];
-    public static final Object NULL_OBJECT = new NullObject();
-
-    public static class NullObject implements Serializable {
+    public SerializationException(Throwable cause) {
+        super(cause);
     }
 }

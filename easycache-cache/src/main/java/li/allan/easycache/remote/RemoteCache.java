@@ -16,25 +16,26 @@
 
 package li.allan.easycache.remote;
 
-import li.allan.easycache.BytesValueWrapper;
+import li.allan.easycache.ValueWrapper;
+import li.allan.easycache.remote.serializer.Serializer;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author lialun
  */
-public interface RemoteCache {
-    void put(byte[] key, byte[] value, long expireAfterCreate, TimeUnit timeUnit);
+public interface RemoteCache<K, V> {
+    void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit, Class<Serializer> keySerializer, Class<Serializer> valueSerializer);
 
-    byte[] get(byte[] key);
+    V get(K key, Class<Serializer> keySerializer);
 
-    BytesValueWrapper getValueWrapper(byte[] key);
+    ValueWrapper<V> getValueWrapper(K key, Class<Serializer> keySerializer);
 
-    boolean contains(byte[] key);
+    boolean contains(K key, Class<Serializer> keySerializer);
 
-    void invalidate(byte[] key);
+    void invalidate(K key, Class<Serializer> keySerializer);
 
-    long expireTimestampInMills(byte[] key);
+    long expireTimestampInMills(K key, Class<Serializer> keySerializer);
 
     long size();
 }

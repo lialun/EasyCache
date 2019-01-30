@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package li.allan.easycache.remote.serializer;
 
-package li.allan.easycache.remote;
 
-import java.io.Serializable;
+import li.allan.easycache.remote.serializer.exception.SerializationException;
 
-/**
- * @author LiALuN
- */
-public class Constants {
-    public static final byte[] EMPTY_ARRAY = new byte[0];
-    public static final Object NULL_OBJECT = new NullObject();
-
-    public static class NullObject implements Serializable {
+public abstract class Serializer {
+    Serializer() {
     }
+
+    abstract public byte[] serialize(Object t) throws SerializationException;
+
+    abstract public <T> Object deserialize(byte[] source, Class<T> type) throws SerializationException;
 }
