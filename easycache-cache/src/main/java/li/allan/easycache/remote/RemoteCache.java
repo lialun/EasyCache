@@ -25,17 +25,17 @@ import java.util.concurrent.TimeUnit;
  * @author lialun
  */
 public interface RemoteCache<K, V> {
-    void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit, Class<Serializer> keySerializer, Class<Serializer> valueSerializer);
+    void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit, Class<? extends Serializer> keySerializer, Class<? extends Serializer> valueSerializer);
 
-    V get(K key, Class<Serializer> keySerializer);
+    V get(K key, Class<? extends Serializer> keySerializer, Class<? extends Serializer> valueSerializer);
 
-    ValueWrapper<V> getValueWrapper(K key, Class<Serializer> keySerializer);
+    ValueWrapper<V> getValueWrapper(K key, Class<? extends Serializer> keySerializer, Class<? extends Serializer> valueSerializer);
 
-    boolean contains(K key, Class<Serializer> keySerializer);
+    boolean contains(K key, Class<? extends Serializer> keySerializer);
 
-    void invalidate(K key, Class<Serializer> keySerializer);
+    void invalidate(K key, Class<? extends Serializer> keySerializer);
 
-    long expireTimestampInMills(K key, Class<Serializer> keySerializer);
+    long expireTimestampInMills(K key, Class<? extends Serializer> keySerializer);
 
     long size();
 }

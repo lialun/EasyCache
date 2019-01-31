@@ -26,13 +26,16 @@ public class ValueWrapper<V> implements Serializable {
     private V value;
     private long expireTimestampInMills;
 
-    public ValueWrapper(V value, long expireTimestampInMills) {
-        this.value = value;
-        this.expireTimestampInMills = expireTimestampInMills;
+    public ValueWrapper() {
     }
 
     public ValueWrapper(V value) {
         this.value = value;
+    }
+
+    public ValueWrapper(V value, long expireTimestampInMills) {
+        this.value = value;
+        this.expireTimestampInMills = expireTimestampInMills;
     }
 
     public V getValue() {

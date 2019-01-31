@@ -20,6 +20,9 @@ import li.allan.easycache.remote.serializer.exception.SerializationException;
 
 import java.nio.charset.Charset;
 
+/**
+ * @author lialun
+ */
 public class StringSerializer extends Serializer {
 
     private final Charset charset;
@@ -35,6 +38,6 @@ public class StringSerializer extends Serializer {
 
     @Override
     public byte[] serialize(Object string) throws SerializationException {
-        return (string == null ? null : ((String) string).getBytes(charset));
+        return (string == null ? null : string.toString().getBytes(charset));
     }
 }

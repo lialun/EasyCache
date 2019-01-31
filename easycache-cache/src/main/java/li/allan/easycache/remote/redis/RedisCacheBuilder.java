@@ -33,12 +33,12 @@ public class RedisCacheBuilder<K, V> {
         this.config = config;
     }
 
-    public RedisCacheBuilder setJedisPool(JedisPool jedisPool) {
+    public RedisCacheBuilder<K, V> setJedisPool(JedisPool jedisPool) {
         this.config.setJedisPool(jedisPool);
         return this;
     }
 
-    public <K1 extends K, V1 extends V> JedisCache<K1, V1> build() {
+    public <K1 extends K, V1 extends V> RedisCache<K1, V1> build() {
         if (config.getJedisPool() != null) {
             return new JedisCache<>(config.getJedisPool());
         }

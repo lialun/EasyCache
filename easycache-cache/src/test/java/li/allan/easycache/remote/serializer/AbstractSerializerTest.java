@@ -4,8 +4,6 @@ import li.allan.easycache.ValueWrapper;
 import org.junit.Test;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,18 +28,33 @@ public abstract class AbstractSerializerTest implements Serializable {
         serializeAndDeserializeCheck(Integer.MAX_VALUE, Integer.class);
         serializeAndDeserializeCheck(Long.MAX_VALUE, Long.class);
         serializeAndDeserializeCheck(Short.MAX_VALUE, Short.class);
-        serializeAndDeserializeCheck(Void.TYPE, Void.class);
 
-        serializeAndDeserializeCheck(new boolean[]{Boolean.TRUE, Boolean.FALSE}, Boolean.class);
-        serializeAndDeserializeCheck(new byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE}, Byte.class);
-        serializeAndDeserializeCheck(new char[]{Character.MAX_VALUE}, Character.class);
-        serializeAndDeserializeCheck(new double[]{Double.MIN_VALUE, Double.MAX_VALUE}, Character.class);
+        serializeAndDeserializeCheck(new boolean[]{Boolean.TRUE, Boolean.FALSE}, boolean[].class);
+        serializeAndDeserializeCheck(new byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE}, byte[].class);
+        serializeAndDeserializeCheck(new char[]{Character.MIN_VALUE, Character.MAX_VALUE}, char[].class);
+        serializeAndDeserializeCheck(new double[]{Double.MIN_VALUE, Double.MAX_VALUE}, double[].class);
+        serializeAndDeserializeCheck(new float[]{Float.MIN_VALUE, Float.MAX_VALUE}, float[].class);
+        serializeAndDeserializeCheck(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, int[].class);
+        serializeAndDeserializeCheck(new long[]{Long.MIN_VALUE, Long.MAX_VALUE}, long[].class);
+        serializeAndDeserializeCheck(new short[]{Short.MIN_VALUE, Short.MAX_VALUE}, short[].class);
+
+        serializeAndDeserializeCheck(new Boolean[]{Boolean.TRUE, Boolean.FALSE}, Boolean[].class);
+        serializeAndDeserializeCheck(new Byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE}, Byte[].class);
+        serializeAndDeserializeCheck(new Character[]{Character.MIN_VALUE, Character.MAX_VALUE}, Character[].class);
+        serializeAndDeserializeCheck(new Double[]{Double.MIN_VALUE, Double.MAX_VALUE}, Double[].class);
+        serializeAndDeserializeCheck(new Float[]{Float.MIN_VALUE, Float.MAX_VALUE}, Float[].class);
+        serializeAndDeserializeCheck(new Integer[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, Integer[].class);
+        serializeAndDeserializeCheck(new Long[]{Long.MIN_VALUE, Long.MAX_VALUE}, Long[].class);
+        serializeAndDeserializeCheck(new Short[]{Short.MIN_VALUE, Short.MAX_VALUE}, Short[].class);
     }
 
     @Test
     public void serializeBean() {
-        serializeAndDeserializeCheck(new Demo(), Demo.class);
-        serializeAndDeserializeCheck(new ValueWrapper<>(new Demo()), ValueWrapper.class);
+        DemoBean demoBean = new DemoBean(Integer.MAX_VALUE, "str",
+                new SubClass(new String[]{"s", "u", "b"}, Double.MIN_VALUE));
+
+        serializeAndDeserializeCheck(demoBean, DemoBean.class);
+        serializeAndDeserializeCheck(new ValueWrapper<>(demoBean), ValueWrapper.class);
         serializeAndDeserializeCheck(new ValueWrapper<>("abc"), ValueWrapper.class);
     }
 
@@ -53,48 +66,6 @@ public abstract class AbstractSerializerTest implements Serializable {
             tmp.equals(obj);
         } else {
             assertEquals(obj, tmp);
-        }
-    }
-
-    private class Demo implements Serializable {
-        private int i = Integer.MAX_VALUE;
-        private String str = "abc";
-        private SubClass subClass = new SubClass();
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Demo demo = (Demo) o;
-            return i == demo.i &&
-                    Objects.equals(str, demo.str) &&
-                    Objects.equals(subClass, demo.subClass);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(i, str, subClass);
-        }
-    }
-
-    private class SubClass implements Serializable {
-        private String[] sub = new String[]{"s", "u", "b"};
-        private double d = Double.MIN_VALUE;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            SubClass subClass = (SubClass) o;
-            return Double.compare(subClass.d, d) == 0 &&
-                    Arrays.equals(sub, subClass.sub);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hash(d);
-            result = 31 * result + Arrays.hashCode(sub);
-            return result;
         }
     }
 }

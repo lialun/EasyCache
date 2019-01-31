@@ -14,47 +14,43 @@ import java.util.concurrent.TimeUnit;
 public class JedisCache<K, V> extends RedisCache<K, V> {
     private JedisPool jedisPool;
 
-    public static RedisCacheBuilder<Object, Object> builder() {
-        return new RedisCacheBuilder<>();
-    }
-
     JedisCache(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
     }
 
     @Override
-    public void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit, Class<Serializer> keySerializer, Class<Serializer> valueSerializer) {
+    public void put(K key, V value, long expireAfterCreate, TimeUnit timeUnit, Class<? extends Serializer> keySerializer, Class<? extends Serializer> valueSerializer) {
         new JedisOperatorTemplate() {
             @Override
             Object readFromRedis() {
                 byte[] keyBytes = SerializerContainer.getSerializer(keySerializer).serialize(key);
                 ValueWrapper<V> valueWrapper = new ValueWrapper<>(value, TimeUnit.MILLISECONDS.convert(expireAfterCreate, timeUnit) + System.currentTimeMillis());
-                byte[] valueWrapperBytes = SerializerContainer.getSerializer(keySerializer).serialize(valueWrapper);
-                jedis.setex(keyBytes, Math.toIntExact(timeUnit.toSeconds(expireAfterCreate)), valueWrapperBytes);
+                byte[] valueWrapperBytes = SerializerContainer.getSerializer(valueSerializer).serialize(valueWrapper);
+                jedis.setex(keyBytes, Math.max(1, (int) timeUnit.toSeconds(expireAfterCreate)), valueWrapperBytes);
                 return null;
             }
         }.getResult();
     }
 
     @Override
-    public V get(K key, Class<Serializer> keySerializer) {
-        ValueWrapper<V> valueWrapper = getValueWrapper(key, keySerializer);
+    public V get(K key, Class<? extends Serializer> keySerializer, Class<? extends Serializer> valueSerializer) {
+        ValueWrapper<V> valueWrapper = getValueWrapper(key, keySerializer, valueSerializer);
         return valueWrapper == null ? null : valueWrapper.getValue();
     }
 
     @Override
-    public ValueWrapper<V> getValueWrapper(K key, Class<Serializer> keySerializer) {
+    public ValueWrapper<V> getValueWrapper(K key, Class<? extends Serializer> keySerializer, Class<? extends Serializer> valueSerializer) {
         return new JedisOperatorTemplate<ValueWrapper<V>>() {
             @Override
             ValueWrapper<V> readFromRedis() {
                 byte[] keyBytes = SerializerContainer.getSerializer(keySerializer).serialize(key);
-                return (ValueWrapper<V>) SerializerContainer.getSerializer(keySerializer).deserialize(jedis.get(keyBytes), ValueWrapper.class);
+                return (ValueWrapper<V>) SerializerContainer.getSerializer(valueSerializer).deserialize(jedis.get(keyBytes), ValueWrapper.class);
             }
         }.getResult();
     }
 
     @Override
-    public boolean contains(K key, Class<Serializer> keySerializer) {
+    public boolean contains(K key, Class<? extends Serializer> keySerializer) {
         return new JedisOperatorTemplate<Boolean>() {
             @Override
             Boolean readFromRedis() {
@@ -65,7 +61,7 @@ public class JedisCache<K, V> extends RedisCache<K, V> {
     }
 
     @Override
-    public void invalidate(K key, Class<Serializer> keySerializer) {
+    public void invalidate(K key, Class<? extends Serializer> keySerializer) {
         new JedisOperatorTemplate() {
             @Override
             Boolean readFromRedis() {
@@ -77,7 +73,7 @@ public class JedisCache<K, V> extends RedisCache<K, V> {
     }
 
     @Override
-    public long expireTimestampInMills(K key, Class<Serializer> keySerializer) {
+    public long expireTimestampInMills(K key, Class<? extends Serializer> keySerializer) {
         return new JedisOperatorTemplate<Long>() {
             @Override
             Long readFromRedis() {
