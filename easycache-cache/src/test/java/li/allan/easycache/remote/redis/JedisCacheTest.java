@@ -12,8 +12,7 @@ import redis.embedded.RedisServer;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * @author lialun
@@ -22,9 +21,12 @@ public class JedisCacheTest {
 
     private static final int TEST_REDIS_PORT = 16394;
 
-    RedisServer redisServer;
-    JedisPool jedisPool;
-    RedisCache<String, String> jedisCache;
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
+
+    private RedisServer redisServer;
+    private JedisPool jedisPool;
+    private RedisCache<String, String> jedisCache;
 
     @Before
     public void startRedis() throws IOException {
@@ -43,40 +45,34 @@ public class JedisCacheTest {
 
     @Test
     public void putAndGet() throws InterruptedException {
-        jedisCache.put("key", "value", 1000, TimeUnit.MILLISECONDS,
+        jedisCache.put(KEY, VALUE, 1000, TimeUnit.MILLISECONDS,
                 StringSerializer.class, Jackson2Serializer.class);
 
-        ValueWrapper<String> value = jedisCache.getValueWrapper("key", StringSerializer.class, Jackson2Serializer.class);
-        assertEquals("value", value.getValue());
-        assertEquals(jedisCache.get("key", StringSerializer.class, Jackson2Serializer.class), "value");
+        ValueWrapper<String> value = jedisCache.getValueWrapper(KEY, StringSerializer.class, Jackson2Serializer.class);
+        assertEquals(VALUE, value.getValue());
+        assertEquals(jedisCache.get(KEY, StringSerializer.class, Jackson2Serializer.class), VALUE);
 
         Thread.sleep(1000);
 
-        assertNull(jedisCache.getValueWrapper("key", StringSerializer.class, Jackson2Serializer.class));
-        assertNull(jedisCache.get("key", StringSerializer.class, Jackson2Serializer.class));
+        assertNull(jedisCache.getValueWrapper(KEY, StringSerializer.class, Jackson2Serializer.class));
+        assertNull(jedisCache.get(KEY, StringSerializer.class, Jackson2Serializer.class));
     }
 
     @Test
-    public void get() {
-    }
+    public void containsAndInvalidate() {
+        jedisCache.invalidate(KEY, StringSerializer.class);
+        assertFalse(jedisCache.contains(KEY, StringSerializer.class));
 
-    @Test
-    public void getValueWrapper() {
-    }
-
-    @Test
-    public void contains() {
-    }
-
-    @Test
-    public void invalidate() {
+        jedisCache.put(KEY, VALUE, 1000, TimeUnit.MILLISECONDS,
+                StringSerializer.class, Jackson2Serializer.class);
+        assertTrue(jedisCache.contains(KEY, StringSerializer.class));
     }
 
     @Test
     public void expireTimestampInMills() {
-    }
+        jedisCache.put(KEY, VALUE, 1, TimeUnit.SECONDS, StringSerializer.class, Jackson2Serializer.class);
+        assertTrue(Math.abs(jedisCache.expireTimestampInMills(KEY, StringSerializer.class) - System.currentTimeMillis() - 1000) < 10);
 
-    @Test
-    public void size() {
+        assertTrue(jedisCache.expireTimestampInMills(KEY + " ", StringSerializer.class) < 0);
     }
 }

@@ -79,14 +79,14 @@ public class JedisCache<K, V> extends RedisCache<K, V> {
             Long readFromRedis() {
                 byte[] keyBytes = SerializerContainer.getSerializer(keySerializer).serialize(key);
                 long ttl = jedis.ttl(keyBytes);
-                return ttl > 0 ? ttl * 1000 : ttl;
+                return ttl > 0 ? (ttl * 1000 + System.currentTimeMillis()) : ttl;
             }
         }.getResult();
     }
 
     @Override
     public long size() {
-        return 0;
+        return -1;
     }
 
     private abstract class JedisOperatorTemplate<T> {

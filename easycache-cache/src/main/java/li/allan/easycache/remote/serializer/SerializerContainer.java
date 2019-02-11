@@ -43,12 +43,4 @@ public class SerializerContainer {
         return (T) CONTAINER.get(serializerCls);
     }
 
-    public static void main(String[] args) {
-//        System.out.println(getSerializer(StringSerializer.class));
-//        System.out.println(getSerializer(StringSerializer.class));
-//        System.out.println(getSerializer(StringSerializer.class));
-//        System.out.println(getSerializer(StringSerializer.class));
-//        System.out.println(getSerializer(StringSerializer.class));
-        System.out.println(getSerializer(Serializer.class));
-    }
 }
