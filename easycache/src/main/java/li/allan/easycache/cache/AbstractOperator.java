@@ -16,13 +16,19 @@
 
 package li.allan.easycache.cache;
 
+import li.allan.easycache.ValueWrapper;
+import li.allan.easycache.local.LocalCache;
+import li.allan.easycache.remote.serializer.Serializer;
+
 /**
  * @author lialun
  */
-public abstract class RemoteCacheOperator {
-    public abstract void put(String cacheName, String cacheKey, Object value, long expireInSecond);
+public abstract class AbstractOperator {
+    public abstract void put(String cacheName, String cacheKey, Object value, Class<? extends Serializer> valueSerializer, long expireInSecond, int cacheSize);
 
-    public abstract <V> V get(String key, Class<V> type);
+    public abstract <V> ValueWrapper<V> get(String cacheName, String cacheKey, Class<? extends Serializer> valueSerializer, Class<V> type);
 
-    public abstract void remove(String key);
+    public abstract void remove(String cacheName, String cacheKey);
+
+    public abstract LocalCache<String, Object> getCache(String cacheName);
 }

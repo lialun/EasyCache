@@ -1,33 +1,35 @@
-/*
- * Copyright (c) 2017-2018. the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package li.allan.easycache.cache;
 
-import li.allan.easycache.local.LocalCache;
 import li.allan.easycache.ValueWrapper;
+import li.allan.easycache.annotation.CacheType;
+import li.allan.easycache.config.EasyCacheConfig;
+import li.allan.easycache.remote.serializer.Serializer;
 
 /**
  * @author lialun
  */
-public abstract class CacheOperator {
-    public abstract void put(String cacheName, String cacheKey, Object value, long expireInSecond, int cacheSize);
+public class CacheOperator {
+    public static void put(CacheType cacheType, String cacheName, String cacheKey, Object value, Class<? extends Serializer> valueSerializer, long expireInSecond, int cacheSize) {
+        AbstractOperator abstractOperator = getOperator(cacheType);
+        abstractOperator.put(cacheName, cacheKey, value, valueSerializer, expireInSecond, cacheSize);
+    }
 
-    public abstract <V> ValueWrapper<V> get(String cacheName, String cacheKey, Class<V> type);
+    public static <V> ValueWrapper<V> get(CacheType cacheType, String cacheName, String cacheKey, Class<? extends Serializer> valueSerializer, Class<V> type) {
+        AbstractOperator abstractOperator = getOperator(cacheType);
 
-    public abstract void remove(String cacheName, String cacheKey);
+        return abstractOperator.get(cacheName, cacheKey, valueSerializer, type);
+    }
 
-    public abstract LocalCache<String, Object> getCache(String cacheName);
+    public static void remove(CacheType cacheType, String cacheName, String cacheKey) {
+        AbstractOperator abstractOperator = getOperator(cacheType);
+        abstractOperator.remove(cacheName, cacheKey);
+    }
+
+    private static AbstractOperator getOperator(CacheType cacheType) {
+        if (cacheType.equals(CacheType.Local)) {
+            return EasyCacheConfig.getLocalCacheOperator();
+        } else {
+            return EasyCacheConfig.getRemoteCacheOperator();
+        }
+    }
 }

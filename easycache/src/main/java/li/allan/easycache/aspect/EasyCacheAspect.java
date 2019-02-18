@@ -62,6 +62,7 @@ public class EasyCacheAspect {
         String className = point.getTarget().getClass().getSimpleName();
         Method method = getMethodFromProceedingJoinPoint(point);
         Class returnType = method.getReturnType();
+        Class valueSerializer = easyCache.valueSerializer()
         //method return void don't need config
         if (returnType.equals(Void.TYPE)) {
             return point.proceed();
@@ -71,7 +72,7 @@ public class EasyCacheAspect {
         /*
          * generate config name and key
          */
-        //TODO 优化key生成方法传入的参数，使得
+        //TODO 优化key生成方法传入的参数，使得Generator能够支持更多cacheName、cacheKey生成凡是
         String cacheName = EasyCacheConfig.getCacheKeyGenerator().cacheName(easyCache.namespace(), easyCache.cacheName());
         String cacheKey = EasyCacheConfig.getCacheKeyGenerator().cacheKey(easyCache.key(), methodParams);
         log.debug("Generate cacheName = \"" + cacheName + "\", cacheKey = \"" + cacheKey + "\"");
@@ -80,8 +81,7 @@ public class EasyCacheAspect {
          */
         try {
             log.debug("Try to get config");
-            CacheOperator cacheOperator = EasyCacheConfig.getLocalCacheOperator();
-            ValueWrapper cache = cacheOperator.get(cacheName, cacheKey, returnType);
+            ValueWrapper cache = CacheOperator.get(easyCache.cacheType(), cacheName, cacheKey, easyCache.valueSerializer(), returnType);
             if (cache != null) {
                 return cache.getValue();
             }
@@ -101,8 +101,7 @@ public class EasyCacheAspect {
                 log.debug("Try to set config");
                 long expireTime = expireTimeInSecond(easyCache.expired());
                 if (expireTime > 0) {
-                    CacheOperator cacheOperator = EasyCacheConfig.getLocalCacheOperator();
-                    cacheOperator.put(cacheName, cacheKey, resp, expireTime, easyCache.maximumSize());
+                    CacheOperator.put(easyCache.cacheType(), cacheName, cacheKey, resp, easyCache.valueSerializer(), expireTime, easyCache.maximumSize());
                 }
             }
         } catch (Exception e) {

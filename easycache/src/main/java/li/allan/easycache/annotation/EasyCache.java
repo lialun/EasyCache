@@ -16,6 +16,8 @@
 
 package li.allan.easycache.annotation;
 
+import li.allan.easycache.remote.serializer.Serializer;
+
 import java.lang.annotation.*;
 
 /**
@@ -25,13 +27,21 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface EasyCache {
+    CacheType cacheType();
+
     /**
      * 命名空间，在多个模块共用一个缓存环境时，避免key冲突
      */
     String namespace() default "";
 
+    /**
+     * 缓存名称
+     */
     String cacheName();
 
+    /**
+     * 缓存标识
+     */
     String key();
 
     /**
@@ -49,6 +59,6 @@ public @interface EasyCache {
      * 缓存最大数量，仅对内部缓存有效
      */
     int maximumSize() default -1;
-
-//    Class<? extends Serializer> serializer() default Serializer.class;
+    
+    Class<? extends Serializer> valueSerializer() default Serializer.class;
 }

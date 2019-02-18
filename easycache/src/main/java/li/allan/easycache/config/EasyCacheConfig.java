@@ -19,9 +19,8 @@ package li.allan.easycache.config;
 
 import li.allan.easycache.CacheKeyGenerator;
 import li.allan.easycache.SimpleCacheKeyGenerator;
-import li.allan.easycache.cache.CacheOperator;
+import li.allan.easycache.cache.AbstractOperator;
 import li.allan.easycache.cache.CaffeineCacheOperator;
-import li.allan.easycache.cache.RemoteCacheOperator;
 import li.allan.easycache.exception.EasyCacheInitializeFailureException;
 import li.allan.easycache.local.caffeine.CaffeineConfig;
 
@@ -30,8 +29,8 @@ import li.allan.easycache.local.caffeine.CaffeineConfig;
  */
 public class EasyCacheConfig {
     private static ConfigProperties config;
-    private static CacheOperator localCacheOperator;
-    private static RemoteCacheOperator remoteCacheOperator;
+    private static AbstractOperator localCacheOperator;
+    private static AbstractOperator remoteCacheOperator;
     private static CacheKeyGenerator cacheKeyGenerator;
 
     private static boolean isInit = false;
@@ -57,12 +56,12 @@ public class EasyCacheConfig {
         return config;
     }
 
-    public static CacheOperator getLocalCacheOperator() {
+    public static AbstractOperator getLocalCacheOperator() {
         isInitializedOrThrowException();
         return localCacheOperator;
     }
 
-    public static RemoteCacheOperator getRemoteCacheOperator() {
+    public static AbstractOperator getRemoteCacheOperator() {
         isInitializedOrThrowException();
         return remoteCacheOperator;
     }

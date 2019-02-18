@@ -20,6 +20,7 @@ import li.allan.easycache.ValueWrapper;
 import li.allan.easycache.local.caffeine.CaffeineCache;
 import li.allan.easycache.local.caffeine.CaffeineCacheBuilder;
 import li.allan.easycache.local.caffeine.CaffeineConfig;
+import li.allan.easycache.remote.serializer.Serializer;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author lialun
  */
-public class CaffeineCacheOperator extends CacheOperator {
+public class CaffeineCacheOperator extends AbstractOperator {
     private CaffeineConfig caffeineConfig;
     private Map<String, CaffeineCache<String, Object>> cacheBucket;
     private ScheduledExecutorService cleanUpExecutor;
@@ -56,14 +57,14 @@ public class CaffeineCacheOperator extends CacheOperator {
     }
 
     @Override
-    public void put(String cacheName, String cacheKey, Object value, long expireInSecond, int maximumSize) {
+    public void put(String cacheName, String cacheKey, Object value, Class<? extends Serializer> valueSerializer, long expireInSecond, int cacheSize) {
         /*
          * create cache bucket if not exist
          */
         if (!cacheBucket.containsKey(cacheName)) {
             synchronized (this) {
                 if (!cacheBucket.containsKey(cacheName)) {
-                    cacheBucket.put(cacheName, new CaffeineCacheBuilder<String, Object>(caffeineConfig.clone(maximumSize)).build());
+                    cacheBucket.put(cacheName, new CaffeineCacheBuilder<String, Object>(caffeineConfig.clone(cacheSize)).build());
                 }
             }
         }
@@ -75,7 +76,7 @@ public class CaffeineCacheOperator extends CacheOperator {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <V> ValueWrapper<V> get(String cacheName, String cacheKey, Class<V> type) {
+    public <V> ValueWrapper<V> get(String cacheName, String cacheKey, Class<? extends Serializer> valueSerializer, Class<V> type) {
         CaffeineCache<String, Object> cache = cacheBucket.get(cacheName);
         if (cache == null) {
             return null;
