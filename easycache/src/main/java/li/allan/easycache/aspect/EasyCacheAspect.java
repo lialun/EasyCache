@@ -25,6 +25,7 @@ import li.allan.easycache.config.EasyCacheConfig;
 import li.allan.easycache.exception.EasyCacheELIllegalException;
 import li.allan.easycache.logging.Log;
 import li.allan.easycache.logging.LogFactory;
+import li.allan.easycache.remote.serializer.Serializer;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -62,7 +63,7 @@ public class EasyCacheAspect {
         String className = point.getTarget().getClass().getSimpleName();
         Method method = getMethodFromProceedingJoinPoint(point);
         Class returnType = method.getReturnType();
-        Class valueSerializer = easyCache.valueSerializer()
+        Class valueSerializer = Serializer.class.equals(easyCache.valueSerializer()) ? EasyCacheConfig() : easyCache.valueSerializer()
         //method return void don't need config
         if (returnType.equals(Void.TYPE)) {
             return point.proceed();
@@ -72,7 +73,7 @@ public class EasyCacheAspect {
         /*
          * generate config name and key
          */
-        //TODO 优化key生成方法传入的参数，使得Generator能够支持更多cacheName、cacheKey生成凡是
+        //TODO 优化key生成方法传入的参数，使得Generator能够支持更多cacheName、cacheKey生成
         String cacheName = EasyCacheConfig.getCacheKeyGenerator().cacheName(easyCache.namespace(), easyCache.cacheName());
         String cacheKey = EasyCacheConfig.getCacheKeyGenerator().cacheKey(easyCache.key(), methodParams);
         log.debug("Generate cacheName = \"" + cacheName + "\", cacheKey = \"" + cacheKey + "\"");

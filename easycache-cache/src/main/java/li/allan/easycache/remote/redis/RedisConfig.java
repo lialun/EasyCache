@@ -1,5 +1,6 @@
 package li.allan.easycache.remote.redis;
 
+import li.allan.easycache.RemoteCacheConfig;
 import redis.clients.jedis.JedisPool;
 
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 /**
  * @author lialun
  */
-public class RedisConfig {
+public class RedisConfig implements RemoteCacheConfig {
     private JedisPool jedisPool;
 
     public JedisPool getJedisPool() {
